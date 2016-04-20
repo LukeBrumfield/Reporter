@@ -1,0 +1,29 @@
+table {
+  font-size: 8pt;
+  border-collapse: collapse;
+}
+table tr th, table tr th {
+  background-color: #e6EEEE;
+  border: 1px solid #CDCDCD;
+  padding: 5px;
+}
+table tr td {
+  color: #3D3D3D;
+  padding: 5px;
+  background-color: #FFF;
+  border: 1px solid #CDCDCD;
+  vertical-align: top;
+}
+.headerRow {
+  font-weight: bold;
+}
+.leftCol {
+  text-align: left;
+}
+.rightCol {
+  text-align: right;
+}
+
+.label {
+  font-weight: bold;
+}
