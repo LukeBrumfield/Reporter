@@ -1,25 +1,11 @@
-var removeTotals = function() {
-  removeTotalRow();
-  removeTotalColumn();
-};
+var insertColumn = function(container, col1, col2, loc, label, type, data) {
 
-var removeTotalColumn = function() {
-  $('th.pvtTotalLabel').remove();
-  $('.pvtGrandTotal').remove();
-  $('.pvtTotal.rowTotal').remove();
-};
-
-var removeTotalRow = function() {
-  $('.pvtTotalRow').remove();
-};
-
-var insertColumn = function(col1, col2, loc, label, type, data, container) {
   th = document.createElement("th");
   th.className = "pvtColLabel";
+  th.setAttribute("rowspan", container.find('.pvtAxisLabel').attr('rowspan'));
   th.innerHTML = label;
 
-  var pos = container.find('.pvtLabelRow');
-
+  var pos = container.find('.pvtLabelRow').first();
   if (loc == -1) {
     pos.append(th);
   } else {
@@ -29,13 +15,14 @@ var insertColumn = function(col1, col2, loc, label, type, data, container) {
   var rows = container.find('.pvtDataRow');
 
   $.each(rows, function(i) {
-
     td = document.createElement("td");
     td.className = "pvtVal";
-    var val;
+    var val, cells;
 
-    var x = this.children[col1].getAttribute("data-value");
-    var y = this.children[col2].getAttribute("data-value");
+    var row = $(this).children('.pvtVal, .pvtTotal');
+
+    var x = row[col1].getAttribute("data-value");
+    var y = row[col2].getAttribute("data-value");
 
     if (x == "null") {
       x = 0;
@@ -45,7 +32,6 @@ var insertColumn = function(col1, col2, loc, label, type, data, container) {
       val = 0;
     } else {
       val = x / y;
-      val = val.toFixed(2);
     }
 
     switch (type) {
@@ -64,9 +50,12 @@ var insertColumn = function(col1, col2, loc, label, type, data, container) {
         }
         break;
       case "percent":
+        val *= 100;
+        val = val.toFixed(2);
         val += "%";
         break;
-      case "mean":
+      case "ratio":
+        val = val.toFixed(2);
         break;
       case "label":
         val = data[i];
@@ -82,21 +71,130 @@ var insertColumn = function(col1, col2, loc, label, type, data, container) {
       $(td).insertAfter(this.children[loc]);
     }
   });
-
-
   var total = container.find('.pvtTotalRow');
 
   td = document.createElement("td");
   td.className = "pvtTotal";
-
-
+  if (data.length > rows.length) {
+    td.innerHTML = data.pop();
+  }
   if (loc == -1) {
     total.append(td);
   } else {
     $(td).insertAfter(total.children()[loc]);
   }
+};
 
+var reporter = function(container, data, keys, rows, cols, instructions) {
+  buildTable(data, keys, rows, cols, container);
+  $.each(instructions, function(i, val) {
+    switch (val[0]) {
+      case ("col"):
+        {
+          insertColumn(container, val[1], val[2], val[3], val[4], val[5], val[6]);
+          break;
+        }
+      case ("rmTotalRows"):
+        {
+          removeTotalRow(container);
+          break;
+        }
+      case ("rmTotalCols"):
+        {
+          removeTotalColumn(container);
+          break;
+        }
+      case ("rmTotals"):
+        {
+          removeTotals(container);
+          break;
+        }
+    }
+  });
+};
 
+var buildTable = function(data, keys, rows, cols, container) {
+
+  var selected = [];
+  var rows2 = [];
+  var cols2 = [];
+
+  $.each(rows,
+    function(i, val) {
+      selected.push(val);
+      rows2.push(keys[val]);
+    });
+
+  $.each(cols,
+    function(i, val) {
+      selected.push(val);
+      cols2.push(keys[val]);
+    });
+
+  var inputFunction = function(callback) {
+    data.forEach(function(element, index) {
+      var sub = {};
+      $.each(selected,
+        function(i, val) {
+          sub[keys[val]] = element[val - 1];
+        });
+      callback(sub);
+    });
+  };
+
+  var output = container.pivot(inputFunction, {
+    rows: rows2,
+    cols: cols2
+  });
+};
+
+var buildUI = function(container) {
+
+  var selected = [];
+  var headers = [];
+  var rawData = getData();
+  var keys = getKeys();
+  var defaults = getDefaults();
+  var n = 0;
+
+  $.each(defaults,
+    function(i, val) {
+      selected.push(i);
+      headers.push(val);
+      ++n;
+    });
+
+  $('#controls input:checked').each(function() {
+    selected.push($(this).attr('id'));
+  });
+
+  var inputFunction = function(callback) {
+    rawData.forEach(function(element, index) {
+      var sub = {};
+      $.each(selected,
+        function(i, val) {
+          sub[keys[val]] = element[val - 1];
+        });
+      callback(sub);
+    });
+  };
+  container.pivotUI(inputFunction, {});
+  populateHeaders(n, headers);
+};
+
+var removeTotals = function(container) {
+  removeTotalRow(container);
+  removeTotalColumn(container);
+};
+
+var removeTotalColumn = function(container) {
+  container.children().find('th.pvtTotalLabel').remove();
+  container.children().find('.pvtGrandTotal').remove();
+  container.children().find('.pvtTotal.rowTotal').remove();
+};
+
+var removeTotalRow = function(container) {
+  container.children().find('.pvtTotalRow').remove();
 };
 
 /*
@@ -120,7 +218,6 @@ var insertColumn = function(col1, col2, loc, label, type, data, container) {
 */
 
 var drawTable = function(data, container) {
-  console.log(data.data);
   var header, label;
   header = true;
   $.each(data.data, function(i, obj) {
@@ -149,69 +246,6 @@ var drawTable = function(data, container) {
   });
 };
 
-var save = function() {
-  $("#rowsave").text('');
-  $("#colsave").text('');
-
-  console.log("Rows");
-
-  $(".pvtRows li span.pvtAttr").each(function(index) {
-    console.log(index + ": " + "'" + $(this).text() + "'");
-  });
-
-  console.log("Cols");
-
-  $(".pvtCols li span.pvtAttr").each(function(index) {
-    console.log(index + ": " + "'" + $(this).text() + "'");
-  });
-};
-
-var load = function(rows, cols) {
-  var data = {};
-  data.rows = rows;
-  data.cols = cols;
-  console.log(data);
-  console.log(JSON.stringify(data));
-  build(JSON.stringify(data));
-};
-
-var build = function(container) {
-
-  var selected = [];
-
-  var headers = [];
-  var rawData = getData();
-  var keys = getKeys();
-  var defaults = getDefaults();
-  var n = 0;
-
-  $.each(defaults,
-    function(i, val) {
-      selected.push(i);
-      headers.push(val);
-      ++n;
-    });
-
-  $('#controls input:checked').each(function() {
-    selected.push($(this).attr('id'));
-  });
-
-  console.log(selected);
-  var inputFunction = function(callback) {
-    rawData.forEach(function(element, index) {
-      var sub = {};
-      $.each(selected,
-        function(i, val) {
-          sub[keys[val]] = element[val - 1];
-        });
-      callback(sub);
-    });
-  };
-  container.pivotUI(inputFunction, {});
-
-  populateHeaders(n, headers);
-};
-
 var build3 = function(container) {
 
   var selected = [];
@@ -222,7 +256,7 @@ var build3 = function(container) {
   $('#controls input').each(function() {
     selected.push($(this).attr('id'));
   });
-  console.log(selected);
+
   var inputFunction = function(callback) {
     rawData.forEach(function(element, index) {
       var sub = {};
@@ -239,43 +273,6 @@ var build3 = function(container) {
   });
 };
 
-var build2 = function(data, rows, cols, container) {
-
-  var selected = [];
-  var headers = [];
-  var keys = getKeys();
-  var defaults = getDefaults();
-
-  //if (data == {}) {
-  data = getData();
-  //}
-
-  $.each(defaults,
-    function(i, val) {
-      selected.push(i);
-      headers.push(val);
-    });
-
-  $('#controls input').each(function() {
-    selected.push($(this).attr('id'));
-  });
-
-
-  var inputFunction = function(callback) {
-    data.forEach(function(element, index) {
-      var sub = {};
-      $.each(selected,
-        function(i, val) {
-          sub[keys[val]] = element[val - 1];
-        });
-      callback(sub);
-    });
-  };
-  var output = container.pivot(inputFunction, {
-    rows: rows,
-    cols: cols
-  });
-};
 
 var updateHeader = function(id) {
   var idval = id + "vals";

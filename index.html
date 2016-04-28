@@ -41,7 +41,9 @@
       var container = $('#output3');
       build2({}, ['industry'], ['union'], container);
 
-      insertColumn(1, 3, -1, "Percent Label", "percent", [], container);
+      insertColumn(1, 3, -1, "percent Yes", "percent", [], container);
+      insertColumn(2, 3, -1, "percent No", "percent", [], container);
+      insertColumn(1, 2, -1, "Ratio Yes/No", "ratio", [], container);
 
     });
   </script>
@@ -70,4 +72,7 @@
   <a href="#" onclick="$('.pvtTable').tableExport({type:'pdf' ,jspdf: {orientation: 'l', format: 'bestfit'}});">PDF</a>
   <a href="#" onclick="$('.pvtTable').tableExport({type:'excel', tableSelector: '.pvtTable'});">Excel</a>
   <a href="#" onclick="$('.pvtTable').tableExport({type:'json'});">JSON</a>
+  <br/>
+  <br/>
+  <div id="output4" style="margin: 30px;"></div>
 </body>
