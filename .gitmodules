@@ -1,0 +1,6 @@
+[submodule "lib/pivottable"]
+	path = lib/pivottable
+	url = https://github.com/LukeBrumfield/pivottable.git
+[submodule "lib/tableExport"]
+	path = lib/tableExport
+	url = https://github.com/LukeBrumfield/tableExport.jquery.plugin.git
