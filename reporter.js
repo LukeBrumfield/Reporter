@@ -1,15 +1,15 @@
 var insertColumn = function(container, col1, col2, loc, label, type, data) {
 
-  th = document.createElement("th");
-  th.className = "pvtColLabel";
-  th.setAttribute("rowspan", container.find('.pvtAxisLabel').attr('rowspan'));
-  th.innerHTML = label;
+  td = document.createElement("td");
+  td.className = "pvtColLabel";
+  td.setAttribute("rowspan", container.find('.pvtAxisLabel').attr('rowspan'));
+  td.innerHTML = label;
 
   var pos = container.find('.pvtLabelRow').first();
   if (loc == -1) {
-    pos.append(th);
+    pos.append(td);
   } else {
-    $(th).insertAfter(pos.children()[loc]);
+    $(td).insertAfter(pos.children()[loc]);
   }
 
   var rows = container.find('.pvtDataRow');
@@ -188,7 +188,7 @@ var removeTotals = function(container) {
 };
 
 var removeTotalColumn = function(container) {
-  container.children().find('th.pvtTotalLabel').remove();
+  container.children().find('td.pvtTotalLabel').remove();
   container.children().find('.pvtGrandTotal').remove();
   container.children().find('.pvtTotal.rowTotal').remove();
 };
@@ -217,8 +217,12 @@ var removeTotalRow = function(container) {
 
 */
 
-var drawTable = function(data, container) {
+var twoColumn = function(data, container) {
   var header, label;
+  var table = document.createElement("table");
+  table.className = "twoColumn";
+
+
   header = true;
   $.each(data.data, function(i, obj) {
     label = true;
@@ -241,38 +245,11 @@ var drawTable = function(data, container) {
       td.textContent = val;
       td.className = "rightCol";
       tr.appendChild(td);
-      container.append(tr);
+      table.appendChild(tr);
     });
   });
+  container.append(table);
 };
-
-var build3 = function(container) {
-
-  var selected = [];
-  var rawData = getData();
-  var keys = getKeys();
-  var defaults = getDefaults();
-
-  $('#controls input').each(function() {
-    selected.push($(this).attr('id'));
-  });
-
-  var inputFunction = function(callback) {
-    rawData.forEach(function(element, index) {
-      var sub = {};
-      $.each(selected,
-        function(i, val) {
-          sub[keys[val]] = element[val - 1];
-        });
-      callback(sub);
-    });
-  };
-  var output = container.pivot(rawData, {
-    rows: ["industry", "union"],
-    cols: ["ethn"]
-  });
-};
-
 
 var updateHeader = function(id) {
   var idval = id + "vals";

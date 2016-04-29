@@ -2,20 +2,22 @@
 
 <head>
   <title>Pivot Demo</title>
-  <link rel="stylesheet" type="text/css" href="dist/pivot.css">
-  <link rel="stylesheet" type="text/css" href="reporter.css">
-  <script type="text/javascript" src="reporter.js"></script>
-  <script type="text/javascript" src="jquery.js"></script>
-  <script type="text/javascript" src="jqueryui/jquery-ui.min.js"></script>
-  <script type="text/javascript" src="dist/pivot.js"></script>
-  <script type="text/javascript" src="data/keys.js"></script>
-  <script type="text/javascript" src="data/cols.js"></script>
-  <script type="text/javascript" src="data/defaults.js"></script>
-  <script type="text/javascript" src="data/data.js"></script>
-  <script type="text/javascript" src="tableExport/libs/jsPDF/jspdf.min.js"></script>
-  <script type="text/javascript" src="tableExport/libs/jsPDF-AutoTable/jspdf.plugin.autotable.js"></script>
-  <script type="text/javascript" src="tableExport/libs/FileSaver/FileSaver.min.js"></script>
-  <script type="text/javascript" src="tableExport/tableExport.js"></script>
+	<link rel="stylesheet" type="text/css" href="pivottable/dist/pivot.css">
+	<link rel="stylesheet" type="text/css" href="reporter.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.5/angular.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
+	<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
+	<script type="text/javascript" src="reporter.js"></script>
+	<script type="text/javascript" src="pivottable/dist/pivot.js"></script>
+	<script type="text/javascript" src="data/keys.js"></script>
+	<script type="text/javascript" src="data/cols.js"></script>
+	<script type="text/javascript" src="data/defaults.js"></script>
+	<script type="text/javascript" src="data/data.js"></script>
+	<script type="text/javascript" src="tableExport.jquery.plugin/libs/jsPDF/jspdf.min.js"></script>
+	<script type="text/javascript" src="tableExport.jquery.plugin/libs/jsPDF-AutoTable/jspdf.plugin.autotable.js"></script>
+	<script type="text/javascript" src="tableExport.jquery.plugin/libs/FileSaver/FileSaver.min.js"></script>
+	<script type="text/javascript" src="tableExport.jquery.plugin/tableExport.js"></script>
   <script type="text/javascript">
     $(document).ready(function() {
       var cols = getCols();
@@ -23,7 +25,7 @@
         $('#controls').append('<input type="checkbox" id="' + i + '" name="' + val + '">' + val + '</input>');
       });
 
-      build($('#output1'));
+      buildUI($('#output1'));
 
       var sample = {
         "data": [{
@@ -36,15 +38,7 @@
           "Grades1-5": "38(12)"
         }]
       };
-      drawTable(sample, $('#output2'));
-
-      var container = $('#output3');
-      build2({}, ['industry'], ['union'], container);
-
-      insertColumn(1, 3, -1, "percent Yes", "percent", [], container);
-      insertColumn(2, 3, -1, "percent No", "percent", [], container);
-      insertColumn(1, 2, -1, "Ratio Yes/No", "ratio", [], container);
-
+      twoColumn(sample, $('#output2'));
     });
   </script>
 
@@ -63,16 +57,12 @@
   </div>
   <div id="output1" style="margin: 30px;"></div>
   <div id="controls" style="margin: 30px;">
-    <button onclick="build($('#output1'))">Pull</button>
+    <button onclick="buildUI($('#output1'))">Pull</button>
   </div>
+  <br />
+  <a href="#" onclick="$('#output1 table.pvtTable').tableExport({type:'pdf'});">PDF</a>
+	<a href="#" onclick="$('#output1 table.pvtTable').tableExport({type:'pdf', jspdf: {orientation: 'landscape', format: 'bestfit'}});">PDF</a>
+	<a href="#" onclick="$('#output1 table.pvtTable').tableExport({type:'excel', tableSelector: '.pvtTable'});">Excel</a>
+  <br />
   <div id="output2" style="margin: 30px;"></div>
-  <div id="output3" style="margin: 30px;"></div>
-  <br/>
-  <a href="#" onclick="$('.pvtTable').tableExport({type:'pdf'});">PDF</a>
-  <a href="#" onclick="$('.pvtTable').tableExport({type:'pdf' ,jspdf: {orientation: 'l', format: 'bestfit'}});">PDF</a>
-  <a href="#" onclick="$('.pvtTable').tableExport({type:'excel', tableSelector: '.pvtTable'});">Excel</a>
-  <a href="#" onclick="$('.pvtTable').tableExport({type:'json'});">JSON</a>
-  <br/>
-  <br/>
-  <div id="output4" style="margin: 30px;"></div>
 </body>
