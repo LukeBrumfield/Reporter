@@ -2,4 +2,6 @@
 
 Combining pivottable and jsPDF, work in progress
 
-Download and open index.html
+use a git clone command to download submodules
+
+git clone --recursive https://github.com/LukeBrumfield/Reporter
