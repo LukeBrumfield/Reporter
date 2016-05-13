@@ -2,22 +2,22 @@
 
 <head>
 	<title>Pivot Demo</title>
-	<link rel="stylesheet" type="text/css" href="pivottable/dist/pivot.css">
+	<link rel="stylesheet" type="text/css" href="lib/pivottable/dist/pivot.css">
 	<link rel="stylesheet" type="text/css" href="reporter.css">
 	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.5/angular.min.js"></script>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
 	<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.css">
 	<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
 	<script type="text/javascript" src="reporter.js"></script>
-	<script type="text/javascript" src="pivottable/dist/pivot.js"></script>
+	<script type="text/javascript" src="lib/pivottable/dist/pivot.js"></script>
 	<script type="text/javascript" src="data/keys.js"></script>
 	<script type="text/javascript" src="data/cols.js"></script>
 	<script type="text/javascript" src="data/defaults.js"></script>
 	<script type="text/javascript" src="data/data.js"></script>
-	<script type="text/javascript" src="tableExport.jquery.plugin/libs/jsPDF/jspdf.min.js"></script>
-	<script type="text/javascript" src="tableExport.jquery.plugin/libs/jsPDF-AutoTable/jspdf.plugin.autotable.js"></script>
-	<script type="text/javascript" src="tableExport.jquery.plugin/libs/FileSaver/FileSaver.min.js"></script>
-	<script type="text/javascript" src="tableExport.jquery.plugin/tableExport.js"></script>
+	<script type="text/javascript" src="lib/tableExport/libs/jsPDF/jspdf.min.js"></script>
+	<script type="text/javascript" src="lib/tableExport/libs/jsPDF-AutoTable/jspdf.plugin.autotable.js"></script>
+	<script type="text/javascript" src="lib/tableExport/libs/FileSaver/FileSaver.min.js"></script>
+	<script type="text/javascript" src="lib/tableExport/tableExport.js"></script>
 	<script type="text/javascript">
 		$(document).ready(function() {
 			var keys = getKeys();
@@ -73,7 +73,8 @@
 	<div id="output5" style="margin: 30px;"></div>
 	<br />
 	<a href="#" onclick="$('#output5 > table.pvtTable').tableExport({type:'pdf'});">PDF</a>
-	<a href="#" onclick="$('#output5 > table.pvtTable').tableExport({type:'pdf', jspdf: {orientation: 'landscape', format: 'bestfit'}});">PDF</a>
+	<a href="#" onclick="$('#output5 > table.pvtTable').tableExport({type:'pdf', jspdf: {orientation: 'p',margins: {left:20, top:10},autotable: false}});">PDF</a>
+
 	<a href="#" onclick="$('#output5 > table.pvtTable').tableExport({type:'excel', tableSelector: '.pvtTable'});">Excel</a>
 	<br />
 
